@@ -1,0 +1,57 @@
+
+/* Season highs on team page */
+.season-highs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.season-high-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  text-decoration: none;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  transition: border-color var(--transition-fast), background var(--transition-fast),
+    transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.season-high-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.season-high-card__media {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.season-high-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.season-high-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.season-high-card__label {
+  font-weight: 600;
+}
+
+.season-high-card__detail {
+  color: var(--text-muted);
+}

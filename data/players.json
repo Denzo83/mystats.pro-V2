@@ -1,0 +1,116 @@
+[
+  {
+    "slug": "kyle-denzin",
+    "name": "Kyle Denzin",
+    "number": "37",
+    "position": "Guard",
+    "image": "assets/placeholderkd.png?v=2",
+    "teams": [
+      "pretty-good",
+      "sweaty-already",
+      "duncles"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=0&single=true&output=csv"
+  },
+  {
+    "slug": "levi-denzin",
+    "name": "Levi Denzin",
+    "number": "43",
+    "position": "Forward",
+    "image": "assets/levi-denzin.png",
+    "teams": [
+      "pretty-good"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=2091114860&single=true&output=csv"
+  },
+  {
+    "slug": "findlay-wendtman",
+    "name": "Findlay Wendtman",
+    "number": "28",
+    "position": "Guard",
+    "image": "assets/findlay-wendtman.png",
+    "teams": [
+      "pretty-good",
+      "chuckers-chuckers"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=863688176&single=true&output=csv"
+  },
+  {
+    "slug": "jackson-neaves",
+    "name": "Jackson Neaves",
+    "number": "10",
+    "position": "Center",
+    "image": "assets/placeholder4.png",
+    "teams": [
+      "pretty-good",
+      "chuckers-chuckers"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=699060431&single=true&output=csv"
+  },
+  {
+    "slug": "josh-todd",
+    "name": "Josh Todd",
+    "number": "11",
+    "position": "Forward",
+    "image": "assets/josh-todd.png",
+    "teams": [
+      "pretty-good"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=2116571222&single=true&output=csv"
+  },
+  {
+    "slug": "rhys-ogle",
+    "name": "Rhys Ogle",
+    "number": "6",
+    "position": "Forward",
+    "image": "assets/placeholder7.png",
+    "teams": [
+      "pretty-good"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=298458955&single=true&output=csv"
+  },
+  {
+    "slug": "jarren-owen",
+    "name": "Jarren Owen",
+    "number": "5",
+    "position": "Guard",
+    "image": "assets/placeholder5.png",
+    "teams": [
+      "pretty-good"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=1191745424&single=true&output=csv"
+  },
+  {
+    "slug": "callan-beamish",
+    "name": "Callan Beamish",
+    "number": "21",
+    "position": "Center",
+    "image": "assets/placeholder3.png",
+    "teams": [
+      "pretty-good"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=430866216&single=true&output=csv"
+  },
+  {
+    "slug": "ethan-todd",
+    "name": "Ethan Todd",
+    "number": "27",
+    "position": "Guard",
+    "image": "assets/placeholder6.png",
+    "teams": [
+      "pretty-good"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=450610169&single=true&output=csv"
+  },
+  {
+    "slug": "codey-nowland",
+    "name": "Codey Nowland",
+    "number": "00",
+    "position": "Guard",
+    "image": "assets/placeholder1.png",
+    "teams": [
+      "sweaty-already"
+    ],
+    "csvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxciqAX0CchbqLYOpQbfOQvf8xJdpSkNl3109OEwuvfWYehtQX5a6LUqeIFdsg/pub?gid=849349567&single=true&output=csv"
+  }
+]
