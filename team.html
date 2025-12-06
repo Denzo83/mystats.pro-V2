@@ -1,146 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Team | mystats.pro</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="icon" type="image/png" href="assets/logo-ball.png" />
 </head>
-<body class="theme-dark">
-  <header class="site-header">
-    <div class="site-header-left">
-      <a href="index.html" class="site-title">
-        <span class="site-title-main">MYSTATS.PRO</span>
-        <span class="site-title-sub">Pretty Good Basketball Team stats</span>
-      </a>
-    </div>
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
-      <span class="theme-toggle-icon">☀️</span>
-    </button>
-  </header>
+<body>
 
-  <main class="page team-page">
-    <!-- Hero / basic info -->
-    <section class="team-hero">
-      <div class="team-hero-logo-wrap">
-        <img id="team-logo" class="team-hero-logo" alt="Team logo" />
-      </div>
-      <div class="team-hero-meta">
-        <h1 id="team-name" class="team-title">Team</h1>
-        <div class="team-meta-row">
-          <span id="team-league" class="team-league"></span>
-          <span id="team-record" class="team-record"></span>
-        </div>
-      </div>
-    </section>
+<header class="site-header">
+  <a href="index.html" class="site-title">MYSTATS.PRO</a>
+  <span class="site-sub">Pretty Good Basketball Team stats</span>
+  <button id="theme-toggle" class="theme-toggle">🌓</button>
+</header>
+
+<main id="team-page">
+
+  <!-- ========================= -->
+  <!-- TEAM HEADER -->
+  <!-- ========================= -->
+  <section id="team-header" class="team-header">
+    <img id="team-logo" alt="Team logo" class="team-logo" />
+    <h1 id="team-name"></h1>
+    <div id="team-meta"></div>
 
     <!-- Tabs -->
-    <nav class="team-tabs" id="team-tabs">
-      <a href="#" data-view="roster" class="team-tab">Roster</a>
-      <a href="#" data-view="games" class="team-tab">Games</a>
-      <a href="#" data-view="leaders" class="team-tab">Leaders</a>
-      <a href="#" data-view="records" class="team-tab">Records</a>
+    <nav class="team-tabs">
+      <a href="#" data-view="roster" class="tab active">Roster</a>
+      <a href="#" data-view="games" class="tab">Games</a>
+      <a href="#" data-view="leaders" class="tab">Leaders</a>
+      <a href="#" data-view="records" class="tab">Records</a>
     </nav>
+  </section>
 
-    <!-- VIEW: Roster -->
-    <section id="view-roster" class="team-view">
-      <h2 class="section-title">Roster</h2>
-      <div id="roster-grid" class="card-grid roster-grid"></div>
-    </section>
+  <!-- ========================= -->
+  <!-- ROSTER VIEW -->
+  <!-- ========================= -->
+  <section id="view-roster" class="team-view">
+    <h2 class="section-title">Roster</h2>
+    <div id="roster-grid" class="roster-grid"></div>
+  </section>
 
-    <!-- VIEW: Games -->
-    <section id="view-games" class="team-view" hidden>
-      <header class="section-header">
-        <h2 class="section-title">Games</h2>
-        <div class="section-filters">
-          <select id="games-season-filter" class="select"></select>
-          <select id="games-phase-filter" class="select">
-            <option value="all">All games</option>
-            <option value="regular">Regular season</option>
-            <option value="playoff">Playoffs</option>
-          </select>
-        </div>
-      </header>
-      <div class="table-wrapper">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Season</th>
-              <th>Phase</th>
-              <th>Opponent</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody id="games-body"></tbody>
-        </table>
-      </div>
-    </section>
+  <!-- ========================= -->
+  <!-- GAMES VIEW -->
+  <!-- ========================= -->
+  <section id="view-games" class="team-view" hidden>
+    <h2 class="section-title">Games</h2>
 
-    <!-- VIEW: Leaders -->
-    <section id="view-leaders" class="team-view" hidden>
-      <header class="section-header">
-        <h2 class="section-title">Leaders</h2>
-        <div class="section-filters">
-          <select id="leaders-season-filter" class="select"></select>
-          <select id="leaders-phase-filter" class="select">
-            <option value="all">All games</option>
-            <option value="regular">Regular season</option>
-            <option value="playoff">Playoffs</option>
-          </select>
-          <select id="leaders-stat-filter" class="select">
-            <option value="pts">Points</option>
-            <option value="reb">Rebounds</option>
-            <option value="oreb">Offensive reb</option>
-            <option value="dreb">Defensive reb</option>
-            <option value="ast">Assists</option>
-            <option value="stl">Steals</option>
-            <option value="blk">Blocks</option>
-            <option value="tov">Turnovers</option>
-            <option value="fg_pct">FG%</option>
-            <option value="tp_pct">3P%</option>
-            <option value="ft_pct">FT%</option>
-            <option value="gp">Games played</option>
-          </select>
-          <button id="leaders-mode-btn" class="btn" data-mode="avg">
-            Averages
-          </button>
-        </div>
-      </header>
-      <div class="leaders-list" id="leaders-list">
-        <!-- JS fills top-10 list here -->
-      </div>
-    </section>
+    <div id="games-container">
+      <table class="stat-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Season</th>
+            <th>Phase</th>
+            <th>Opponent</th>
+            <th>Result</th>
+          </tr>
+        </thead>
+        <tbody id="games-table-body"></tbody>
+      </table>
+    </div>
+  </section>
 
-    <!-- VIEW: Records / Season highs -->
-    <section id="view-records" class="team-view" hidden>
-      <header class="section-header">
-        <h2 class="section-title">Records</h2>
-        <div class="section-filters">
-          <select id="records-season-filter" class="select"></select>
-          <select id="records-phase-filter" class="select">
-            <option value="all">All games</option>
-            <option value="regular">Regular season</option>
-            <option value="playoff">Playoffs</option>
-          </select>
-        </div>
-      </header>
+  <!-- ========================= -->
+  <!-- LEADERS VIEW -->
+  <!-- ========================= -->
+  <section id="view-leaders" class="team-view" hidden>
+    <h2 class="section-title">Leaders</h2>
 
-      <div id="records-grid" class="card-grid records-grid">
-        <!-- JS: tiles for PTS, REB, AST, OREB, DREB, STL, BLK, 3PM, FGM, FTM, TOV, FG%, 3P%, GP -->
-      </div>
-    </section>
+    <div id="leaders-container">
+      <table class="stat-table">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>GP</th>
+            <th>PTS</th>
+            <th>REB</th>
+            <th>OREB</th>
+            <th>DREB</th>
+            <th>AST</th>
+            <th>STL</th>
+            <th>BLK</th>
+            <th>TO</th>
+            <th>FG%</th>
+            <th>3P%</th>
+            <th>FT%</th>
+          </tr>
+        </thead>
+        <tbody id="leaders-body"></tbody>
+      </table>
+    </div>
+  </section>
 
-    <p class="site-footer-note">
-      Built for Pretty Good Basketball Team  © 2026
-    </p>
-  </main>
+  <!-- ========================= -->
+  <!-- RECORDS VIEW -->
+  <!-- ========================= -->
+  <section id="view-records" class="team-view" hidden>
+    <h2 class="section-title">Records</h2>
 
-  <!-- important: NOT a module, so we can use global helpers from app.js -->
-  <script src="js/team.js"></script>
-</body>
-</html>
+    <div class="filters-row">
+      <select id="records-season-filter"></select>
+      <select id="records-phase-filter">
+        <option value="all">All games</option>
+        <option value="regular" selected>Regular season</option>
+        <option value="playoff">Playoffs</option>
+      </select>
+    </div>
+
+    <div id="records-grid" class="records-grid"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  Built for the Pretty Good Basketball Team 🏀 © 2026
+</footer>
+
+<script src="js/app.js"></script>
+<script src="js/team.js"></script>
 
 </body>
 </html>
