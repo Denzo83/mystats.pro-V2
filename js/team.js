@@ -7,13 +7,13 @@
 
 // Google Sheets CSV URLs
 const PLAYERS_SHEET =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fcSc3bth-xMxcjAXOCchbqLYQpObfOQvf8xJdpSkNl3I09OEwuvfWYehtQX5a6LQIeIFdsg/pub?output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fcSc3bth-xMxcjAXOCchbqLYQpObfOQvf8xJdpSkNl3I09OEwuvfWYehtQX5a6LQIeIFdsg/pub";
 
 const GAMES_SHEET =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7JWjsx4iztJtf6PTOR6_adf9pdbtFlgIN8aX2_3QynveLtg427bYcDOOzIFpxEoNaMFYwaIFj12T/pub?output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7JWjsx4iztJtf6PTOR6_adf9pdbtFlgIN8aX2_3QynveLtg427bYcDOOzIFpxEoNaMFYwaIFj12T/pub";
 
 const BOXSCORE_SHEET =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGdu88uH_BwBwrBtCzDnVGR1CNDWiazKjW_sIOjBAvOMH7kOqJxNtWtNiYl3IPfLZhOyaPH43bZyb2/pub?output=csv";
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGdu88uH_BwBwrBtCzDnVGR1CNDWiazKjW_sIOjBAvOMH7kOqJxNtWtNiYl3IPfLZhOyaPH43bZyb2/pub";
 
 // Player tab gid mapping
 const PLAYER_GIDS = {
