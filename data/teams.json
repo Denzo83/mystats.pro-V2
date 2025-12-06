@@ -2,7 +2,13 @@
   "pretty-good": {
     "name": "Pretty Good Basketball Team",
     "shortName": "PGBT",
-    "league": "Social League",
-    "logo": "pgbt-logo.png"
+    "league": "Tuesday B",
+    "logo": "pretty-good.png"
+  },
+  "chuckers-chuckers": {
+    "name": "Chuckers Chuckers",
+    "shortName": "Chuck",
+    "league": "Thursday D2",
+    "logo": "chuckers-chuckers.png"
   }
 }

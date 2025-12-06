@@ -8,6 +8,29 @@
       "pretty-good"
     ],
     "csv": "data/kyle-denzin.csv",
-    "image": "kyle.png"
+    "image": "kyle-denzin.png"
+  },
+  "levi-denzin": {
+    "name": "Levi Denzin",
+    "number": 43,
+    "position": "F",
+    "team": "pretty-good",
+    "teams": [
+      "pretty-good"
+    ],
+    "csv": "data/kyle-denzin.csv",
+    "image": "levi-denzin.png"
+  },
+  "findlay-wendtman": {
+    "name": "Findlay Wendtman",
+    "number": 28,
+    "position": "G",
+    "team": "pretty-good",
+    "teams": [
+      "pretty-good",
+      "chuckers-chuckers"
+    ],
+    "csv": "data/kyle-denzin.csv",
+    "image": "findalay-wendtman.png"
   }
 }
