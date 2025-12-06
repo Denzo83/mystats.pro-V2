@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Records | mystats.pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <a href="index.html" class="back-button">← Home</a>
+    <button id="theme-toggle" class="theme-toggle">🌓</button>
+</header>
+
+<section class="page-header">
+    <h1 id="records-team-name">Team Records</h1>
+</section>
+
+<section class="filter-row">
+    <label>Season:
+        <select id="records-season-filter"></select>
+    </label>
+
+    <label>Phase:
+        <select id="records-phase-filter">
+            <option value="all">All</option>
+            <option value="regular">Regular</option>
+            <option value="playoff">Playoffs</option>
+        </select>
+    </label>
+</section>
+
+<section>
+    <div id="records-grid" class="records-grid"></div>
+</section>
+
+<script src="app.js"></script>
+<script src="records.js"></script>
+
+</body>
+</html>
