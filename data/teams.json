@@ -3,12 +3,12 @@
     "name": "Pretty Good Basketball Team",
     "shortName": "PGBT",
     "league": "Tuesday B",
-    "logo": "pretty-good.png"
+    "logo": "pretty-good-logo.png"
   },
   "chuckers-chuckers": {
     "name": "Chuckers Chuckers",
     "shortName": "Chuck",
     "league": "Thursday D2",
-    "logo": "chuckers-chuckers.png"
+    "logo": "chucker-logo.png"
   }
 }
