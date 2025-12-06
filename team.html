@@ -10,80 +10,59 @@
   <header class="site-header">
     <div class="site-header__brand">
       <a href="index.html" class="brand-link">mystats.pro</a>
-      <span class="brand-tagline">Social basketball stats</span>
+      <span class="brand-tagline">Pretty Good Basketball Team stats</span>
     </div>
     <div class="site-header__actions">
       <button type="button" class="theme-toggle" data-theme-toggle>☾</button>
     </div>
   </header>
-
   <main class="page-team__main">
     <section class="team-hero" id="team-hero"></section>
-
     <section class="team-controls">
       <div class="team-controls__row">
         <label for="team-season-select">Season</label>
         <select id="team-season-select"></select>
       </div>
     </section>
-
-    <!-- Season highs -->
-    <section class="team-section" id="team-season-highs">
+    <section class="team-section">
       <h2>Season highs</h2>
-      <div class="season-highs-grid" id="season-highs-grid">
-      </div>
+      <div class="season-highs-grid" id="season-highs-grid"></div>
     </section>
-
     <section class="team-section">
       <h2>Games</h2>
       <div class="table-wrapper">
         <table class="stat-table" id="team-games-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Season</th>
-              <th>Opponent</th>
-              <th>Result</th>
-              <th>Score (pts by player)</th>
+              <th>Date</th><th>Season</th><th>Opponent</th><th>Result</th><th>Score (pts by player)</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
     </section>
-
     <section class="team-section">
       <h2>Leaders</h2>
       <div class="table-wrapper">
         <table class="stat-table" id="team-leaders-table">
           <thead>
             <tr>
-              <th>Player</th>
-              <th>PTS</th>
-              <th>REB</th>
-              <th>AST</th>
-              <th>STL</th>
-              <th>BLK</th>
-              <th>FG%</th>
-              <th>3P%</th>
-              <th>FT%</th>
+              <th>Player</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th>
+              <th>FG%</th><th>3P%</th><th>FT%</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
     </section>
-
     <section class="team-section">
       <h2>Roster</h2>
       <div id="team-roster" class="card-grid card-grid--players"></div>
     </section>
   </main>
-
   <footer class="site-footer">
     <span>Built for the Pretty Good Basketball Team 🏀</span>
   </footer>
-
   <script type="module" src="js/app.js"></script>
   <script type="module" src="js/team.js"></script>
 </body>

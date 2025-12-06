@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Leaders — mystats.pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="page-leaders">
+  <header class="site-header">
+    <div class="site-header__brand">
+      <a href="index.html" class="brand-link">mystats.pro</a>
+      <span class="brand-tagline">Pretty Good Basketball Team stats</span>
+    </div>
+    <div class="site-header__actions">
+      <button type="button" class="theme-toggle" data-theme-toggle>☾</button>
+    </div>
+  </header>
+  <main class="page-leaders__main">
+    <section class="page-header">
+      <div class="page-header__row">
+        <h1>Season leaders</h1>
+        <div class="page-header__controls">
+          <label for="leaders-season-select">Season</label>
+          <select id="leaders-season-select"></select>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="table-wrapper">
+        <table class="stat-table" id="leaders-table">
+          <thead>
+            <tr>
+              <th>Player</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th>
+              <th>FG%</th><th>3P%</th><th>FT%</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <span>Built for the Pretty Good Basketball Team 🏀</span>
+  </footer>
+  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/leaders.js"></script>
+</body>
+</html>

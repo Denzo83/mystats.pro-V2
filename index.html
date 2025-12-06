@@ -2,105 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>mystats.pro — Teams</title>
-  <link rel="stylesheet" href="css/style.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <title>mystats.pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
-  <header class="header">
-    <div class="brand">
-      <div class="badge">mystats.pro</div>
+<body class="page-home">
+  <header class="site-header">
+    <div class="site-header__brand">
+      <a href="index.html" class="brand-link">mystats.pro</a>
+      <span class="brand-tagline">Pretty Good Basketball Team stats</span>
     </div>
-    <div class="actions">
-      <a href="players.html" class="btn">Players</a>
-      <div class="search"><input id="search" placeholder="Search team or player"/></div>
-      <button id="theme-toggle" class="toggle">Dark mode</button>
+    <div class="site-header__actions">
+      <button type="button" class="theme-toggle" data-theme-toggle>☾</button>
     </div>
   </header>
-  <main class="container">
+  <main class="page-home__main">
     <section class="hero">
-      <div class="hero-left">
-        <h1 class="display">Your Season. Your Numbers.</h1>
-        <div class="subtle">Live game logs, career vs season splits, and team results — all in one place.</div>
-        <div class="cta">
-          <a href="#teams-grid" class="btn primary">Browse Teams</a>
-          <a href="players.html" class="btn">View a Player</a>
-
-        </div>
-      </div>
-      <div class="hero-tiles" id="hero-tiles"></div>
+      <h1 class="hero__title">Your season. Your numbers.</h1>
+      <p class="hero__subtitle">
+        Live game logs, season splits, and team leaders — all in one place.
+      </p>
     </section>
-    <h1>Teams</h1>
-    <div id="teams" class="grid"></div>
+    <section class="home-section">
+      <div class="home-section__header"><h2>Teams</h2></div>
+      <div id="teams-grid" class="card-grid card-grid--teams"></div>
     </section>
-    <h1>Players</h1>
-<section class="players-grid" id="home-players"></section>
-<script type="module">
-  const players = await loadJSON('data/players.json');
-  const hp = document.getElementById('home-players');
-  players.slice(0,8).forEach(p=>{
-    const a=document.createElement('a');
-    a.className='player-tile';
-    a.href=`player.html?player=${p.slug}`;
-    a.innerHTML=`<img src="${p.image}" alt=""/><div><div class="nm">${p.name}</div></div>`;
-    hp.appendChild(a);
-  });
-  // </section>
-</script>
-
+    <section class="home-section">
+      <div class="home-section__header"><h2>Players</h2></div>
+      <div id="players-grid" class="card-grid card-grid--players"></div>
+    </section>
   </main>
-  <footer class="footer container">
-    © <span id="year"></span> mystats.pro
+  <footer class="site-footer">
+    <span>Built for the Pretty Good Basketball Team 🏀</span>
   </footer>
-  <script type="module">
-    import { initThemeToggle, loadJSON, initSearch } from './js/app.js';
-    initThemeToggle(); initSearch();
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const grid = document.getElementById('teams');
-    (async () => {
-      const teams = await loadJSON('data/teams.json');
-      const players = await loadJSON('data/players.json');
-      
-      // Hero tiles (4 teams)
-      const tiles = document.getElementById('hero-tiles');
-      teams.slice(0,4).forEach(t => {
-        const card = document.createElement('a');
-        card.className = 'hero-tile';
-        card.href = `team.html?team=${t.slug}`;
-        const mode = localStorage.getItem('theme') || 'light';
-        const colors = t.colors?.[mode] || t.colors?.light || {};
-        const p = colors.primary || '#3b82f6';
-        const a = colors.accent || '#60a5fa';
-        card.style.background = `linear-gradient(135deg, ${p}, ${a})`;
-        card.innerHTML = `<img class="tile-logo" src="${t.logo}" alt="logo"/><div class="tile-title">${t.name}</div>`;
-        tiles.appendChild(card);
-      });
-
-      for (const t of teams) {
-        const card = document.createElement('a');
-        card.className = 'card';
-        card.href = `team.html?team=${t.slug}`;
-        const roster = t.roster.map(slug => {
-          const p = players.find(x => x.slug === slug);
-          return p ? p.name : slug;
-        }).slice(0,4).join(' · ') + (t.roster.length>4? ' …':'');
-        card.innerHTML = `
-          <div class="title"><img class="logo" src="${t.logo}" alt="logo"/> ${t.name}</div>
-          <div class="pills">
-            <span class="pill" style="border-color: var(--primary)">Team</span>
-            <span class="pill">Roster</span>
-          </div>
-          <div class="section">
-            <div class="vstack">
-              <div style="font-size:14px; color:var(--muted)">Top players</div>
-              <div>${roster}</div>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      }
-    })();
-  </script>
+  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/home.js"></script>
 </body>
 </html>
