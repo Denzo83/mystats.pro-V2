@@ -1,23 +1,75 @@
-<!-- game.html -->
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Game Box Score</title>
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
-    <header class="header">
-      <a href="index.html" class="badge">mystats.pro</a>
-    </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boxscore | mystats.pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <main class="container vstack">
-      <div id="game-header" class="banner"></div>
-      <div id="box-table" class="section"></div>
-    </main>
+<header class="site-header">
+    <a href="index.html" class="back-button">← Home</a>
+    <button id="theme-toggle" class="theme-toggle">🌓</button>
+</header>
 
-    <!-- keep type="module" or plain script; this file has no imports -->
-    <script type="module" src="js/game.js"></script>
-  </body>
+<section class="page-header">
+    <h1 id="boxscore-title">Boxscore</h1>
+    <p id="boxscore-meta" class="page-subtitle"></p>
+</section>
+
+<section>
+    <h2 id="team1-name">Team 1</h2>
+    <table class="stat-table scroll-x">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>FG</th>
+                <th>3P</th>
+                <th>FT</th>
+                <th>OREB</th>
+                <th>DREB</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>BLK</th>
+                <th>TO</th>
+                <th>PF</th>
+                <th>PTS</th>
+            </tr>
+        </thead>
+        <tbody id="team1-body"></tbody>
+    </table>
+</section>
+
+<section>
+    <h2 id="team2-name">Team 2</h2>
+    <table class="stat-table scroll-x">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Team</th>
+                <th>FG</th>
+                <th>3P</th>
+                <th>FT</th>
+                <th>OREB</th>
+                <th>DREB</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>BLK</th>
+                <th>TO</th>
+                <th>PF</th>
+                <th>PTS</th>
+            </tr>
+        </thead>
+        <tbody id="team2-body"></tbody>
+    </table>
+</section>
+
+<script src="app.js"></script>
+<script src="boxscore.js"></script>
+
+</body>
 </html>
-
