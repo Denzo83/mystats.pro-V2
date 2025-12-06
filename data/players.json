@@ -23,14 +23,14 @@
   {
     "name": "Jackson Neaves",
     "slug": "jackson-neaves",
-    "image": "assets/players/jackson-neaves.png",
+    "image": "assets/players/placeholder5.png",
     "position": "G",
     "number": 15
   },
   {
     "name": "Ethan Todd",
     "slug": "ethan-todd",
-    "image": "assets/players/ethan-todd.png",
+    "image": "assets/players/placeholder5.png",
     "position": "G",
     "number": 7
   },
@@ -44,21 +44,21 @@
   {
     "name": "Callan Beamish",
     "slug": "callan-beamish",
-    "image": "assets/players/callan-beamish.png",
+    "image": "assets/players/placeholder5.png",
     "position": "C",
     "number": 11
   },
   {
     "name": "Jarren Owen",
     "slug": "jarren-owen",
-    "image": "assets/players/jarren-owen.png",
+    "image": "assets/players/placeholder5.png",
     "position": "G",
     "number": 5
   },
   {
     "name": "Rhys Ogle",
     "slug": "rhys-ogle",
-    "image": "assets/players/rhys-ogle.png",
+    "image": "assets/players/placeholder5.png",
     "position": "F",
     "number": 14
   }
