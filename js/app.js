@@ -23,19 +23,31 @@ export function fmtPct(made, att) {
 export function parseCsv(text) {
   const lines = text.trim().split(/\r?\n/);
   if (!lines.length) return [];
-  const headers = lines[0].split(",").map((h) => h.trim());
+
+  // Header row
+  const rawHeaders = lines[0].split(",");
+  const normalise = (h) => h.trim().toLowerCase().replace(/\s+/g, "");
+  const headers = rawHeaders.map((h) => normalise(h));
+
   const rows = [];
+
   for (let i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue;
-    const cols = lines[i].split(",").map((c) => c.trim());
+    const line = lines[i];
+    if (!line.trim()) continue;
+
+    const cols = line.split(",").map((c) => c.trim());
     const row = {};
-    headers.forEach((h, idx) => {
-      row[h] = cols[idx] ?? "";
+
+    headers.forEach((key, idx) => {
+      row[key] = cols[idx] ?? "";
     });
-    rows.push(row);
+
+    return rows;
   }
+
   return rows;
 }
+
 
 // Map date string -> year + "Season" label (Summer / Autumn / Winter / Spring)
 export function getYearAndSeasonLabel(dateStr) {

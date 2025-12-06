@@ -26,6 +26,13 @@ async function loadCsv(path) {
   return parseCsv(text);
 }
 
+function pick(row, ...keys) {
+  for (const k of keys) {
+    if (row[k] !== undefined && row[k] !== "") return row[k];
+  }
+  return "";
+}
+
 function createPlayerCard(id, player) {
   const img = player.image
     ? `assets/${player.image}`
@@ -88,30 +95,67 @@ function buildGameRecords(allGamesRaw) {
 
   for (const entry of allGamesRaw) {
     const { playerId, playerName, row } = entry;
-    const { year, seasonLabel } = getYearAndSeasonLabel(row.date);
-    const phase = row.phase || "regular";
+
+    // Column names are normalised by parseCsv: lowercase, no spaces
+    const dateStr = pick(row, "date", "gamedate");
+    const opponent = pick(row, "opponent", "opp");
+    const result = pick(row, "result");
+
+    // Optional explicit season label (e.g. "2025 Summer"), otherwise infer from date
+    const seasonOverride = pick(row, "season", "seasonlabel");
+    const { year, seasonLabel: inferredSeason } = getYearAndSeasonLabel(dateStr);
+    const seasonLabel = seasonOverride || inferredSeason;
+
+    // Phase / playoff flag
+    const phaseRaw = (pick(row, "phase", "playoff", "playoffs") || "")
+      .toString()
+      .toLowerCase();
+    let phase = "regular";
+    if (
+      ["p", "y", "yes", "true", "playoff", "playoffs"].includes(phaseRaw)
+    ) {
+      phase = "playoffs";
+    }
+
+    // Box score stats with flexible header names
+    const min = toNum(pick(row, "min", "mins", "minutes"));
+
+    const fgMade = toNum(pick(row, "fgm", "fg", "fieldgoalsmade"));
+    const fgAtt = toNum(pick(row, "fga", "fieldgoalsattempted"));
+
+    const threeMade = toNum(pick(row, "3pm", "3p", "threemade"));
+    const threeAtt = toNum(pick(row, "3pa", "threeatt", "3ptattempts"));
+
+    const ftMade = toNum(pick(row, "ftm", "ft", "freethrowsmade"));
+    const ftAtt = toNum(pick(row, "fta", "freethrowsattempted"));
+
+    const reb = toNum(pick(row, "totrb", "trb", "reb", "reboundstotal"));
+    const ast = toNum(pick(row, "ast", "ass", "assists"));
+    const stl = toNum(pick(row, "stl", "st", "steals"));
+    const blk = toNum(pick(row, "blk", "bs", "blocks"));
+    const pts = toNum(pick(row, "pts", "points"));
 
     const game = {
       playerId,
       playerName,
-      date: row.date,
-      opponent: row.opponent || "",
-      result: row.result || "",
+      date: dateStr,
+      opponent,
+      result,
       seasonLabel,
       year,
       phase,
-      min: toNum(row.min),
-      pts: toNum(row.pts),
-      reb: toNum(row.totrb || row.reb),
-      ast: toNum(row.ass),
-      stl: toNum(row.st),
-      blk: toNum(row.bs),
-      fgMade: toNum(row.fg),
-      fgAtt: toNum(row.fga),
-      threeMade: toNum(row["3p"]),
-      threeAtt: toNum(row["3pa"]),
-      ftMade: toNum(row.ft),
-      ftAtt: toNum(row.fta)
+      min,
+      pts,
+      reb,
+      ast,
+      stl,
+      blk,
+      fgMade,
+      fgAtt,
+      threeMade,
+      threeAtt,
+      ftMade,
+      ftAtt
     };
 
     games.push(game);
@@ -338,9 +382,12 @@ async function initTeamPage() {
   const allGamesRaw = [];
   await Promise.all(
     teamPlayersEntries.map(async ([playerId, player]) => {
-      if (!player.csv) return;
+      // Support both "csv" and "csvUrl" fields
+      const csvPath = player.csv || player.csvUrl;
+      if (!csvPath) return;
+
       try {
-        const rows = await loadCsv(player.csv);
+        const rows = await loadCsv(csvPath);
         for (const row of rows) {
           allGamesRaw.push({
             playerId,
