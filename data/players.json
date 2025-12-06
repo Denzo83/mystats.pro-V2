@@ -14,7 +14,7 @@
   "name": "Levi Denzin",
   "number": "43",
   "position": "F",
-  "image": "assets/levi-denzin.png",
+  "image": "levi-denzin.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good"
@@ -25,7 +25,7 @@
   "name": "Findlay Wendtman",
   "number": "28",
   "position": "G",
-  "image": "assets/findlay-wendtman.png",
+  "image": "findlay-wendtman.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good",
@@ -37,7 +37,7 @@
   "name": "Jackson Neaves",
   "number": "10",
   "position": "C/F",
-  "image": "assets/placeholder4.png",
+  "image": "placeholder4.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good",
@@ -49,7 +49,7 @@
   "name": "Josh Todd",
   "number": "11",
   "position": "F/C",
-  "image": "assets/josh-todd.png",
+  "image": "josh-todd.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good"
@@ -60,7 +60,7 @@
   "name": "Rhys Ogle",
   "number": "6",
   "position": "F",
-  "image": "assets/placeholder7.png",
+  "image": "placeholder7.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good"
@@ -71,7 +71,7 @@
   "name": "Jarren Owen",
   "number": "5",
   "position": "G",
-  "image": "assets/placeholder5.png",
+  "image": "placeholder5.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good"
@@ -82,7 +82,7 @@
   "name": "Callan Beamish",
   "number": "21",
   "position": "C/F",
-  "image": "assets/placeholder3.png",
+  "image": "placeholder3.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good"
@@ -93,7 +93,7 @@
   "name": "Ethan Todd",
   "number": "27",
   "position": "G",
-  "image": "assets/placeholder6.png",
+  "image": "placeholder6.png",
   "team": "pretty-good",
   "teams": [
     "pretty-good"
