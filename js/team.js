@@ -96,7 +96,7 @@ function buildGameRecords(allGamesRaw) {
   for (const entry of allGamesRaw) {
     const { playerId, playerName, row } = entry;
 
-    // Column names are normalised by parseCsv: lowercase, no spaces
+    // Column names normalised by parseCsv: lowercase, no spaces
     const dateStr = pick(row, "date", "gamedate");
     const opponent = pick(row, "opponent", "opp");
     const result = pick(row, "result");
@@ -121,18 +121,28 @@ function buildGameRecords(allGamesRaw) {
     const min = toNum(pick(row, "min", "mins", "minutes"));
 
     const fgMade = toNum(pick(row, "fgm", "fg", "fieldgoalsmade"));
-    const fgAtt = toNum(pick(row, "fga", "fieldgoalsattempted"));
+    const fgAtt  = toNum(pick(row, "fga", "fieldgoalsattempted"));
 
     const threeMade = toNum(pick(row, "3pm", "3p", "threemade"));
-    const threeAtt = toNum(pick(row, "3pa", "threeatt", "3ptattempts"));
+    const threeAtt  = toNum(pick(row, "3pa", "threeatt", "3ptattempts"));
 
     const ftMade = toNum(pick(row, "ftm", "ft", "freethrowsmade"));
-    const ftAtt = toNum(pick(row, "fta", "freethrowsattempted"));
+    const ftAtt  = toNum(pick(row, "fta", "freethrowsattempted"));
 
-    const reb = toNum(pick(row, "totrb", "trb", "reb", "reboundstotal"));
+    // New: offensive & defensive rebounds, turnovers
+    const oreb = toNum(pick(row, "or", "oreb", "offreb", "offensiverebounds"));
+    const dreb = toNum(pick(row, "dr", "dreb", "defreb", "defensiverebounds"));
+
+    // Total rebounds: prefer explicit TOTAL, otherwise OR + DR fallback
+    let reb = toNum(pick(row, "totrb", "trb", "reb", "reboundstotal"));
+    if (!reb && (oreb || dreb)) {
+      reb = oreb + dreb;
+    }
+
     const ast = toNum(pick(row, "ast", "ass", "assists"));
     const stl = toNum(pick(row, "stl", "st", "steals"));
     const blk = toNum(pick(row, "blk", "bs", "blocks"));
+    const tov = toNum(pick(row, "to", "tov", "turnovers"));
     const pts = toNum(pick(row, "pts", "points"));
 
     const game = {
@@ -147,9 +157,12 @@ function buildGameRecords(allGamesRaw) {
       min,
       pts,
       reb,
+      oreb,
+      dreb,
       ast,
       stl,
       blk,
+      tov,
       fgMade,
       fgAtt,
       threeMade,
@@ -231,9 +244,12 @@ function renderLeadersTable(tbody, games) {
         gp: 0,
         pts: 0,
         reb: 0,
+        oreb: 0,
+        dreb: 0,
         ast: 0,
         stl: 0,
         blk: 0,
+        tov: 0,
         fgMade: 0,
         fgAtt: 0,
         threeMade: 0,
@@ -246,9 +262,12 @@ function renderLeadersTable(tbody, games) {
     p.gp += 1;
     p.pts += g.pts;
     p.reb += g.reb;
+    p.oreb += g.oreb;
+    p.dreb += g.dreb;
     p.ast += g.ast;
     p.stl += g.stl;
     p.blk += g.blk;
+    p.tov += g.tov;
     p.fgMade += g.fgMade;
     p.fgAtt += g.fgAtt;
     p.threeMade += g.threeMade;
@@ -259,6 +278,7 @@ function renderLeadersTable(tbody, games) {
 
   const rows = Array.from(byPlayer.values());
 
+  // Sort by scoring average
   rows.sort((a, b) => b.pts / (b.gp || 1) - a.pts / (a.gp || 1));
 
   tbody.innerHTML = rows
@@ -266,9 +286,13 @@ function renderLeadersTable(tbody, games) {
       const gp = p.gp || 1;
       const pts = p.pts / gp;
       const reb = p.reb / gp;
+      const oreb = p.oreb / gp;
+      const dreb = p.dreb / gp;
       const ast = p.ast / gp;
       const stl = p.stl / gp;
       const blk = p.blk / gp;
+      const tov = p.tov / gp;
+
       const fgPct = fmtPct(p.fgMade, p.fgAtt);
       const threePct = fmtPct(p.threeMade, p.threeAtt);
       const ftPct = fmtPct(p.ftMade, p.ftAtt);
@@ -276,11 +300,15 @@ function renderLeadersTable(tbody, games) {
       return `
         <tr>
           <td>${p.name}</td>
+          <td>${p.gp}</td>
           <td>${fmtNumber(pts, 1)}</td>
           <td>${fmtNumber(reb, 1)}</td>
+          <td>${fmtNumber(oreb, 1)}</td>
+          <td>${fmtNumber(dreb, 1)}</td>
           <td>${fmtNumber(ast, 1)}</td>
           <td>${fmtNumber(stl, 1)}</td>
           <td>${fmtNumber(blk, 1)}</td>
+          <td>${fmtNumber(tov, 1)}</td>
           <td>${fgPct}</td>
           <td>${threePct}</td>
           <td>${ftPct}</td>
