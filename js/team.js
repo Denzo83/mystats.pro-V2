@@ -1,13 +1,14 @@
 /**************************************************************
- * Simple helpers
+ * Basic helpers
  **************************************************************/
 const Q = (s) => document.querySelector(s);
 const QA = (s) => [...document.querySelectorAll(s)];
 const norm = (s) => (s || "").toLowerCase().trim();
-const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const slugify = (s) =>
+  (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 /**************************************************************
- * Safe loaders
+ * Safe JSON + CSV loading
  **************************************************************/
 async function loadJSONSafe(url) {
   try {
@@ -24,18 +25,14 @@ async function fetchCsvSafe(url) {
     const txt = await fetch(url).then((r) => r.text());
     return parseCsv(txt);
   } catch (err) {
-    console.warn("Could not load CSV:", url, err);
+    console.warn("CSV load error", url, err);
     return [];
   }
 }
 
-/**************************************************************
- * CSV parser
- **************************************************************/
 function parseCsv(text) {
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length);
   if (!lines.length) return [];
-
   const headers = lines[0].split(",").map((h) => h.trim());
   return lines.slice(1).map((line) => {
     const cols = line.split(",");
@@ -46,60 +43,72 @@ function parseCsv(text) {
 }
 
 /**************************************************************
- * Index loader (games index)
+ * Load games from your GAMES sheet
+ *
+ * Sheet: 1NkI00kl3h11DwE3_kpslz2pWecEewv14NYoXA9nPEGE
+ * Expected headers (can be tweaked later):
+ *   date, season, phase, team, opponent, result
  **************************************************************/
-async function loadIndex() {
-  return fetchCsvSafe(
-    "https://docs.google.com/spreadsheets/d/15zxpQZJamQfEz07qFtZAI_738cI2rjc2qrrz-q-8Bo0/export?format=csv"
-  );
+async function loadGamesSheet() {
+  const url =
+    "https://docs.google.com/spreadsheets/d/1NkI00kl3h11DwE3_kpslz2pWecEewv14NYoXA9nPEGE/export?format=csv";
+  return fetchCsvSafe(url);
 }
 
 /**************************************************************
- * Determine if this row belongs to team
- **************************************************************/
-function isTeamInRow(team, row) {
-  const tSlug = slugify(team.slug);
-  const fields = [row.teamA, row.teamB, row.teamName, row.team].map(norm);
-  return fields.some((f) => f.includes(tSlug));
-}
-
-/**************************************************************
- * Determine which players belong to a team
+ * Which players belong to this team?
+ * - Try to match teamSlug / team / teamName
+ * - If nothing matches, show ALL players so the page is never empty
  **************************************************************/
 function getTeamPlayers(team, players) {
   const tSlug = norm(team.slug);
   const tName = norm(team.name);
 
-  // Prefer explicit roster array
-  if (Array.isArray(team.roster) && team.roster.length) {
-    return team.roster
-      .map((sl) => players.find((p) => p.slug === sl))
+  let roster = players.filter((p) => {
+    const fields = [p.teamSlug, p.team, p.teamName]
+      .map(norm)
       .filter(Boolean);
+    return fields.some(
+      (f) => f.includes(tSlug) || f.includes(tName)
+    );
+  });
+
+  if (!roster.length) {
+    console.warn(
+      "No players matched team",
+      team.slug,
+      "— falling back to ALL players"
+    );
+    roster = players.slice();
   }
 
-  // Otherwise infer roster by matching team fields
-  return players.filter((p) => {
-    const fields = [p.team, p.teamSlug, p.teamName].map(norm);
-    return fields.some((f) => f.includes(tSlug) || f.includes(tName));
-  });
+  return roster;
 }
 
 /**************************************************************
  * TEAM HEADER
  **************************************************************/
 function fillTeamHeader(team, games) {
-  Q("#team-logo").src = team.logo || `assets/teams/${team.slug}.png`;
-  Q("#team-name").textContent = team.name;
+  const logo = Q("#team-logo");
+  if (logo) {
+    logo.src = team.logo || `assets/teams/${team.slug}.png`;
+    logo.alt = `${team.name} logo`;
+  }
+
+  const nameEl = Q("#team-name");
+  if (nameEl) nameEl.textContent = team.name;
 
   const meta = Q("#team-meta");
-  meta.textContent = `${games.length} games found`;
+  if (meta) meta.textContent = `${games.length} games`;
 }
 
 /**************************************************************
- * ROSTER RENDER
+ * ROSTER VIEW
  **************************************************************/
 async function renderRoster(team, players) {
   const grid = Q("#roster-grid");
+  if (!grid) return;
+
   grid.innerHTML = "";
 
   const roster = getTeamPlayers(team, players);
@@ -115,11 +124,15 @@ async function renderRoster(team, players) {
 
     a.innerHTML = `
       <div class="player-tile-image-wrap">
-        <img src="${p.image || `assets/players/${p.slug}.png`}" class="player-tile-image">
+        <img src="${p.image || `assets/players/${p.slug}.png`}" 
+             class="player-tile-image" 
+             alt="${p.name}">
       </div>
       <div class="player-tile-meta">
         <div class="player-tile-name">${p.name}</div>
-        <div class="player-tile-sub">#${p.number || "?"} · ${p.position || ""}</div>
+        <div class="player-tile-sub">#${p.number || "?"} · ${
+      p.position || ""
+    }</div>
       </div>
     `;
 
@@ -128,23 +141,70 @@ async function renderRoster(team, players) {
 }
 
 /**************************************************************
- * Load player CSV rows for leaders & records
+ * Load stats rows for each player (for leaders)
  **************************************************************/
 async function loadRosterPlayerRows(team, players) {
   const roster = getTeamPlayers(team, players);
+
   const csvs = await Promise.all(
-    roster.map((p) => fetchCsvSafe(p.csvUrl || ""))
+    roster.map((p) =>
+      p.csvUrl ? fetchCsvSafe(p.csvUrl) : Promise.resolve([])
+    )
   );
 
-  return roster.map((p, i) => ({ player: p, rows: csvs[i] || [] }));
+  return roster.map((p, i) => ({
+    player: p,
+    rows: csvs[i] || [],
+  }));
 }
 
 /**************************************************************
- * GAMES TABLE
+ * GAMES VIEW
  **************************************************************/
-function renderGamesTable(team, games) {
+function filterGamesForTeam(team, games) {
+  const tSlug = norm(team.slug);
+  const tName = norm(team.name);
+
+  let filtered = games.filter((g) => {
+    const tField = norm(g.team);
+    const home = norm(g.teamA);
+    const away = norm(g.teamB);
+
+    return (
+      tField.includes(tSlug) ||
+      tField.includes(tName) ||
+      home.includes(tSlug) ||
+      home.includes(tName) ||
+      away.includes(tSlug) ||
+      away.includes(tName)
+    );
+  });
+
+  if (!filtered.length) {
+    console.warn(
+      "No games matched this team — showing ALL games as fallback."
+    );
+    filtered = games.slice();
+  }
+
+  return filtered;
+}
+
+function renderGamesTable(team, gamesRaw) {
   const body = Q("#games-table-body");
+  if (!body) return;
+
   body.innerHTML = "";
+
+  const games = filterGamesForTeam(team, gamesRaw);
+
+  if (!games.length) {
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td colspan="5" style="text-align:center; opacity:0.7;">No games found.</td>';
+    body.appendChild(tr);
+    return;
+  }
 
   games.forEach((g) => {
     const tr = document.createElement("tr");
@@ -152,7 +212,7 @@ function renderGamesTable(team, games) {
       <td>${g.date || ""}</td>
       <td>${g.season || ""}</td>
       <td>${g.phase || ""}</td>
-      <td>${g.teamA === team.name ? g.teamB : g.teamA}</td>
+      <td>${g.opponent || g.teamB || g.team || ""}</td>
       <td>${g.result || ""}</td>
     `;
     body.appendChild(tr);
@@ -160,10 +220,12 @@ function renderGamesTable(team, games) {
 }
 
 /**************************************************************
- * LEADERS TABLE
+ * LEADERS VIEW
  **************************************************************/
 function renderLeadersSection(playerData) {
   const body = Q("#leaders-body");
+  if (!body) return;
+
   body.innerHTML = "";
 
   const rows = [];
@@ -171,7 +233,7 @@ function renderLeadersSection(playerData) {
   playerData.forEach(({ player, rows: stats }) => {
     if (!stats.length) return;
 
-    let totals = {
+    const totals = {
       gp: 0,
       pts: 0,
       reb: 0,
@@ -191,6 +253,7 @@ function renderLeadersSection(playerData) {
 
     stats.forEach((r) => {
       totals.gp++;
+
       totals.pts += +r.pts || 0;
       totals.reb += +r.totrb || 0;
       totals.oreb += +r.or || 0;
@@ -208,8 +271,10 @@ function renderLeadersSection(playerData) {
       totals.ftA += +r.fta || 0;
     });
 
-    const avg = (v) => (totals.gp ? (v / totals.gp).toFixed(1) : "0.0");
-    const pct = (m, a) => (a ? ((m / a) * 100).toFixed(1) : "--");
+    const avg = (v) =>
+      totals.gp ? (v / totals.gp).toFixed(1) : "0.0";
+    const pct = (m, a) =>
+      a ? ((m / a) * 100).toFixed(1) : "--";
 
     rows.push({
       name: player.name,
@@ -227,6 +292,14 @@ function renderLeadersSection(playerData) {
       ft: pct(totals.ftM, totals.ftA),
     });
   });
+
+  if (!rows.length) {
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td colspan="13" style="text-align:center; opacity:0.7;">No stats found yet.</td>';
+    body.appendChild(tr);
+    return;
+  }
 
   rows.forEach((r) => {
     const tr = document.createElement("tr");
@@ -250,13 +323,14 @@ function renderLeadersSection(playerData) {
 }
 
 /**************************************************************
- * RECORDS SECTION (simplified version)
+ * RECORDS VIEW (placeholder for now)
  **************************************************************/
 function renderRecordsSection(team, playerData, games) {
   const grid = Q("#records-grid");
-  grid.innerHTML = "";
+  if (!grid) return;
 
-  grid.innerHTML = `<div style="opacity:0.5;padding:20px;">Records engine placeholder (requires full data model)</div>`;
+  grid.innerHTML =
+    '<div style="opacity:0.7;padding:1rem 0;">Records / season-highs engine coming next – once we confirm your games & leaders are reading correctly from the sheets.</div>';
 }
 
 /**************************************************************
@@ -269,13 +343,14 @@ function initTabs() {
   tabs.forEach((tab) =>
     tab.addEventListener("click", (e) => {
       e.preventDefault();
+      const view = tab.dataset.view;
 
       tabs.forEach((t) => t.classList.remove("active"));
       tab.classList.add("active");
 
-      const view = tab.dataset.view;
       views.forEach((v) => (v.hidden = true));
-      Q(`#view-${view}`).hidden = false;
+      const activeView = Q(`#view-${view}`);
+      if (activeView) activeView.hidden = false;
     })
   );
 }
@@ -289,31 +364,27 @@ async function initTeamPage() {
   const url = new URL(location.href);
   const slug = url.searchParams.get("team");
 
-  const [teams, players] = await Promise.all([
+  const [teams, players, gamesSheet] = await Promise.all([
     loadJSONSafe("data/teams.json"),
     loadJSONSafe("data/players.json"),
+    loadGamesSheet(),
   ]);
 
   const team = teams.find((t) => t.slug === slug);
-  if (!team) return;
-
-  let indexRows = [];
-  try {
-    indexRows = await loadIndex();
-  } catch (err) {
-    console.warn("Index CSV failed");
+  if (!team) {
+    console.error("Unknown team slug:", slug);
+    return;
   }
 
-  const gamesForTeam = indexRows.filter((g) => isTeamInRow(team, g));
+  const gamesForHeader = filterGamesForTeam(team, gamesSheet);
+  fillTeamHeader(team, gamesForHeader);
 
-  fillTeamHeader(team, gamesForTeam);
   await renderRoster(team, players);
 
   const playerData = await loadRosterPlayerRows(team, players);
-
-  renderGamesTable(team, gamesForTeam);
+  renderGamesTable(team, gamesSheet);
   renderLeadersSection(playerData);
-  renderRecordsSection(team, playerData, gamesForTeam);
+  renderRecordsSection(team, playerData, gamesSheet);
 }
 
 initTeamPage();
