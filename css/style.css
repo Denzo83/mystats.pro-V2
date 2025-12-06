@@ -117,6 +117,16 @@ body {
   background: #ffffff;
 }
 
+/* Team header logo sizing */
+.team-logo img,
+header img[alt="Team Logo"] {
+  max-width: 220px;   /* tweak to taste */
+  height: auto;
+  display: block;
+  margin: 16px auto 24px; /* center under title */
+}
+
+
 /* ---------- Main layout wrappers ---------- */
 
 .page-home__main,

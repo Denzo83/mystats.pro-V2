@@ -5,15 +5,40 @@
 
 // ========== CONFIGURATION ==========
 
-// Google Sheets CSV URLs
-const PLAYERS_SHEET =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fcSc3bth-xMxcjAXOCchbqLYQpObfOQvf8xJdpSkNl3I09OEwuvfWYehtQX5a6LQIeIFdsg/pub";
+// --- Google Sheets CSV helpers ------------------------------------
 
-const GAMES_SHEET =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7JWjsx4iztJtf6PTOR6_adf9pdbtFlgIN8aX2_3QynveLtg427bYcDOOzIFpxEoNaMFYwaIFj12T/pub";
+// Base “publish to web” CSV URLs (copy-paste exactly from your dialogs)
+const PLAYER_SHEET_BASE =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQsO8Qs1fCs3bth-xMxcjqAX0CChbqLYOpQbF0Qvf8xJdpSkNl3I09OEwuvfWYehQX5a6LUqelFdsg/pub?gid=';
 
-const BOXSCORE_SHEET =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSGdu88uH_BwBwrBtCzDnVGR1CNDWiazKjW_sIOjBAvOMH7kOqJxNtWtNiYl3IPfLZhOyaPH43bZyb2/pub";
+const GAMES_SHEET_BASE =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7JWjs4zi4Tt6PT0R6_adf9pdbtFlgIN8aX2_3QynveLtg427bYcD0OzIFpxE0NaMFYwaIFj12T/pub?gid=';
+
+const BOXSCORE_SHEET_BASE =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSGdu88uH_BwBwrBtCZdnvGR1CNDWiazKjW_slOjBAvOMH7kOqJxNtWivNY1I3PflLZhOyaPH43bZyb2/pub?gid=';
+
+// This suffix is what Google adds when you publish as CSV for a single tab
+const CSV_SUFFIX = '&single=true&output=csv';
+
+// sheetConfig.sheet must match the "sheet" column in your index CSV
+function getCsvUrlForSheet(sheetConfig) {
+  let base;
+  switch (sheetConfig.sheet) {
+    case 'mystats.pro_players':
+      base = PLAYER_SHEET_BASE;
+      break;
+    case 'Mystats.pro_Games':
+      base = GAMES_SHEET_BASE;
+      break;
+    case 'Mystats.pro_Boxscore':
+      base = BOXSCORE_SHEET_BASE;
+      break;
+    default:
+      throw new Error(`Unknown sheet type: ${sheetConfig.sheet}`);
+  }
+  return `${base}${sheetConfig.gid}${CSV_SUFFIX}`;
+}
+
 
 // Player tab gid mapping
 const PLAYER_GIDS = {
@@ -122,7 +147,7 @@ async function loadPlayerStatsForTeam(team) {
     const gid = PLAYER_GIDS[slug];
     if (gid === undefined) continue;
 
-    const url = `${sheetUrl}?gid=${gid}&single=true&output=csv`;
+    const url = getCsvUrlForSheet(row);
     const rows = await fetchCSV(url);
     results.push({ slug, rows });
   }
@@ -136,7 +161,7 @@ async function loadGamesForTeam(slug) {
   const gid = TEAM_GIDS[slug];
   if (gid === undefined) return [];
 
-  const url = `${sheetUrl}?gid=${gid}&single=true&output=csv`;
+  const url = getCsvUrlForSheet(row);
   return await fetchCSV(url);
 }
 
