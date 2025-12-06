@@ -168,6 +168,25 @@ body {
   gap: 0.9rem;
 }
 
+/* Roster grid: smaller tiles */
+.card-grid--roster {
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  justify-content: flex-start;
+}
+
+/* Make roster cards a bit tighter so they feel closer to “just image + name” */
+.card-grid--roster .card {
+  max-width: 220px;
+  padding: 0.6rem;
+}
+
+/* On mobile: exactly 2 cards per row */
+@media (max-width: 640px) {
+  .card-grid--roster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .card {
   display: flex;
   flex-direction: column;
