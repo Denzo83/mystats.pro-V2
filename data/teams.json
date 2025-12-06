@@ -1,14 +1,27 @@
-{
-  "pretty-good": {
+[
+  {
+    "slug": "pretty-good",
     "name": "Pretty Good Basketball Team",
-    "shortName": "PGBT",
-    "league": "Tuesday B",
-    "logo": "pretty-good-logo.png"
+    "logo": "assets/teams/pretty-good.png",
+    "roster": [
+      "kyle-denzin",
+      "levi-denzin",
+      "findlay-wendtman",
+      "jackson-neaves",
+      "ethan-todd",
+      "josh-todd",
+      "callan-beamish",
+      "jarren-owen",
+      "rhys-ogle"
+    ]
   },
-  "chuckers-chuckers": {
+  {
+    "slug": "chuckers-chuckers",
     "name": "Chuckers Chuckers",
-    "shortName": "Chuck",
-    "league": "Thursday D2",
-    "logo": "chuckers-logo.png"
+    "logo": "assets/teams/chuckers-logo.png",
+    "roster": [
+      "findlay-wendtman",
+      "jackson-neaves"
+    ]
   }
-}
+]
