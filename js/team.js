@@ -1,11 +1,4 @@
-// js/team.js  (v2+)
-// Uses existing helpers from app.js
-import {
-  initThemeToggle,
-  loadJSON,
-  fetchCsv,
-  computePlayerAverages,
-} from "./app.js";
+// js/team.js – non-module version that works with existing app.js globals
 
 // ---------- tiny utils ----------
 const Q = (s) => document.querySelector(s);
@@ -21,6 +14,97 @@ const norm = (s) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+
+// ---------- hook into existing helpers or provide fallbacks ----------
+const initThemeToggleSafe =
+  typeof window.initThemeToggle === "function"
+    ? window.initThemeToggle
+    : () => {};
+
+const loadJSONSafe =
+  typeof window.loadJSON === "function"
+    ? window.loadJSON
+    : async function (path) {
+        const res = await fetch(path, { cache: "no-store" });
+        return res.json();
+      };
+
+const fetchCsvSafe =
+  typeof window.fetchCsv === "function"
+    ? window.fetchCsv
+    : async function (url) {
+        const res = await fetch(url, { cache: "no-store" });
+        const text = await res.text();
+        const lines = text.trim().split(/\r?\n/);
+        const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
+        const rows = [];
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          if (!line) continue;
+          const cols = line.split(",").map((c) => c.trim());
+          const obj = {};
+          headers.forEach((h, idx) => (obj[h] = cols[idx] ?? ""));
+          rows.push(obj);
+        }
+        return rows;
+      };
+
+const computePlayerAveragesSafe =
+  typeof window.computePlayerAverages === "function"
+    ? window.computePlayerAverages
+    : function (rows) {
+        if (!rows.length) {
+          return {
+            pts: 0,
+            reb: 0,
+            ast: 0,
+            stl: 0,
+            blk: 0,
+            fg_pct: 0,
+            tp_pct: 0,
+            ft_pct: 0,
+          };
+        }
+        let pts = 0,
+          reb = 0,
+          ast = 0,
+          stl = 0,
+          blk = 0,
+          fgm = 0,
+          fga = 0,
+          tpm = 0,
+          tpa = 0,
+          ftm = 0,
+          fta = 0;
+        rows.forEach((r) => {
+          const n = (k) => Number(r[k] || 0);
+          pts += n("pts");
+          reb += Number(r.totrb || n("or") + n("dr"));
+          ast += n("ass");
+          stl += n("st");
+          blk += n("bs");
+          fgm += n("fg");
+          fga += n("fga");
+          tpm += n("3p");
+          tpa += n("3pa");
+          ftm += n("ft");
+          fta += n("fta");
+        });
+        const g = rows.length || 1;
+        const fg_pct = fga ? (fgm / fga) * 100 : 0;
+        const tp_pct = tpa ? (tpm / tpa) * 100 : 0;
+        const ft_pct = fta ? (ftm / fta) * 100 : 0;
+        return {
+          pts: pts / g,
+          reb: reb / g,
+          ast: ast / g,
+          stl: stl / g,
+          blk: blk / g,
+          fg_pct,
+          tp_pct,
+          ft_pct,
+        };
+      };
 
 // ---------- index CSV (for games + boxscore links) ----------
 const INDEX_CSV =
@@ -54,17 +138,13 @@ function getInitialView() {
 }
 
 function setView(view) {
-  // toggle sections
   QA(".team-view").forEach((sec) => {
     sec.hidden = sec.id !== `view-${view}`;
   });
-  // tabs active state
   QA(".team-tab").forEach((a) => {
     if (a.dataset.view === view) a.classList.add("active");
     else a.classList.remove("active");
   });
-
-  // update URL query param (shallow)
   const url = new URL(location.href);
   url.searchParams.set("view", view);
   history.replaceState({}, "", url.toString());
@@ -85,9 +165,7 @@ function initTabs() {
 
 // ---------- logo / header ----------
 function setTeamLogo(team) {
-  const el =
-    document.getElementById("team-logo") ||
-    document.querySelector("[data-team-logo]");
+  const el = document.getElementById("team-logo");
   if (!el) return;
   const src =
     team.logo || team.logoUrl || team.image || `assets/logos/${team.slug}.png`;
@@ -108,20 +186,17 @@ function fillTeamHeader(team, gamesForTeam) {
   const league = Q("#team-league");
   if (league) league.textContent = team.league || team.subtitle || "";
 
-  // record from index
   const rec = gamesForTeam.reduce(
     (acc, g) => {
-      const tSlug = team.slug;
-      const score1 = Number(g.score_team1 || 0);
-      const score2 = Number(g.score_team2 || 0);
-      const is1 = (g.team1_slug || g.team1 || "").toLowerCase().includes(
-        tSlug.toLowerCase()
-      );
-      const is2 = (g.team2_slug || g.team2 || "").toLowerCase().includes(
-        tSlug.toLowerCase()
-      );
+      const tSlug = team.slug.toLowerCase();
+      const s1 = Number(g.score_team1 || 0);
+      const s2 = Number(g.score_team2 || 0);
+      const t1 = (g.team1_slug || g.team1 || "").toLowerCase();
+      const t2 = (g.team2_slug || g.team2 || "").toLowerCase();
+      const is1 = t1.includes(tSlug);
+      const is2 = t2.includes(tSlug);
       if (!(is1 || is2)) return acc;
-      const win = is1 ? score1 > score2 : score2 > score1;
+      const win = is1 ? s1 > s2 : s2 > s1;
       if (win) acc.w++;
       else acc.l++;
       return acc;
@@ -185,7 +260,6 @@ function opponentForTeam(team, g) {
   const t2 = slugify(g.team2_slug || g.team2 || "");
   if (tSlug === t1) return g.team2 || g.team2_slug || "";
   if (tSlug === t2) return g.team1 || g.team1_slug || "";
-  // fallback
   return g.team1 || g.team2 || "";
 }
 
@@ -193,7 +267,7 @@ function phaseFromRow(g) {
   const p = (g.phase || g.phasetype || "").toLowerCase();
   if (p === "playoff" || p === "playoffs") return "playoff";
   if (p === "regular" || p === "rs") return "regular";
-  return "regular"; // default if missing
+  return "regular";
 }
 
 function buildSeasonListFromIndex(team, gamesForTeam) {
@@ -245,7 +319,10 @@ function renderGamesTable(team, gamesForTeam) {
       const opp = opponentForTeam(team, g);
       const s1 = Number(g.score_team1 || 0);
       const s2 = Number(g.score_team2 || 0);
-      const is1 = isTeamInRow(team, { ...g, team1_slug: g.team1_slug || g.team1 });
+      const is1 = isTeamInRow(team, {
+        ...g,
+        team1_slug: g.team1_slug || g.team1,
+      });
       const win = is1 ? s1 > s2 : s2 > s1;
       const result = `${win ? "W" : "L"} ${s1}-${s2}`;
       const phaseLabel = phase === "playoff" ? "Playoffs" : "Regular";
@@ -296,10 +373,9 @@ async function loadRosterPlayerRows(team, players) {
     .filter(Boolean);
 
   const csvs = await Promise.all(
-    roster.map((p) => (p.csvUrl ? fetchCsv(p.csvUrl) : Promise.resolve([])))
+    roster.map((p) => (p.csvUrl ? fetchCsvSafe(p.csvUrl) : Promise.resolve([])))
   );
 
-  // per-player array of rows that belong to this team
   const data = roster.map((p, idx) => {
     const rows = (csvs[idx] || []).filter((r) => matchTeam(r.team || ""));
     return { player: p, rows };
@@ -321,7 +397,6 @@ function buildSeasonListFromRows(playerData) {
 }
 
 function aggregateForLeaders(playerData, seasonVal, phaseVal) {
-  // returns { playerName, gp, totals:{...}, avgs:{...} }
   return playerData.map(({ player, rows }) => {
     const filtered = rows.filter((r) => {
       if (seasonVal !== "all" && r.season !== seasonVal) return false;
@@ -369,9 +444,7 @@ function aggregateForLeaders(playerData, seasonVal, phaseVal) {
       }
     );
 
-    const avgs = computePlayerAverages(filtered); // this already returns per-game averages for core stats
-
-    // add our own extra averages
+    const avgs = computePlayerAveragesSafe(filtered);
     const games = gp || 1;
     const avgOreb = totals.oreb / games;
     const avgDreb = totals.dreb / games;
@@ -398,7 +471,7 @@ function aggregateForLeaders(playerData, seasonVal, phaseVal) {
   });
 }
 
-function renderLeadersSection(playerAgg) {
+function renderLeadersSection(playerData) {
   const seasonSel = Q("#leaders-season-filter");
   const phaseSel = Q("#leaders-phase-filter");
   const statSel = Q("#leaders-stat-filter");
@@ -406,7 +479,7 @@ function renderLeadersSection(playerAgg) {
   const list = Q("#leaders-list");
   if (!seasonSel || !phaseSel || !statSel || !modeBtn || !list) return;
 
-  const seasons = buildSeasonListFromRows(playerAgg);
+  const seasons = buildSeasonListFromRows(playerData);
   populateSeasonSelect(seasonSel, seasons, true);
 
   function computeRows() {
@@ -415,7 +488,7 @@ function renderLeadersSection(playerAgg) {
     const mode = modeBtn.dataset.mode || "avg";
     const statKey = statSel.value;
 
-    const aggregated = aggregateForLeaders(playerAgg, seasonVal, phaseVal);
+    const aggregated = aggregateForLeaders(playerData, seasonVal, phaseVal);
 
     const rows = aggregated.map((item) => {
       let value;
@@ -424,7 +497,6 @@ function renderLeadersSection(playerAgg) {
       } else if (mode === "avg") {
         value = item.avgs[statKey] || 0;
       } else {
-        // totals
         if (statKey === "fg_pct" || statKey === "tp_pct" || statKey === "ft_pct") {
           value = item.avgs[statKey] || 0;
         } else {
@@ -457,7 +529,7 @@ function renderLeadersSection(playerAgg) {
         statSel.value === "fg_pct" ||
         statSel.value === "tp_pct" ||
         statSel.value === "ft_pct"
-          ? `${r.value.toFixed(1)}`
+          ? r.value.toFixed(1)
           : r.value.toFixed(1);
       li.innerHTML = `
         <span class="leaders-rank">${idx + 1}</span>
@@ -484,7 +556,6 @@ function renderLeadersSection(playerAgg) {
 }
 
 // ---------- records / season highs ----------
-
 const RECORD_STATS = [
   ["pts", "Points"],
   ["reb", "Rebounds"],
@@ -503,7 +574,6 @@ const RECORD_STATS = [
 ];
 
 function aggregateForRecords(team, playerData, gamesForTeam, seasonVal, phaseVal) {
-  // Build lookup from date+opponent to game_id
   const gameIndexMap = new Map();
   gamesForTeam.forEach((g) => {
     const key = `${g.date}__${opponentForTeam(team, g)}`.toLowerCase();
@@ -513,7 +583,6 @@ function aggregateForRecords(team, playerData, gamesForTeam, seasonVal, phaseVal
   const records = {};
 
   playerData.forEach(({ player, rows }) => {
-    // count games for GP per season
     const filteredRows = rows.filter((r) => {
       if (seasonVal !== "all" && r.season !== seasonVal) return false;
       const phase = (r.phase || "").toLowerCase();
@@ -549,7 +618,6 @@ function aggregateForRecords(team, playerData, gamesForTeam, seasonVal, phaseVal
         tov: n("to"),
       };
 
-      // single-game records
       Object.entries(stats).forEach(([k, v]) => {
         const cur = records[k];
         if (!cur || v > cur.value) {
@@ -557,10 +625,8 @@ function aggregateForRecords(team, playerData, gamesForTeam, seasonVal, phaseVal
         }
       });
 
-      // percentages per game (optional; we treat as record by that game)
       const fga = n("fga");
       const tpa = n("3pa");
-      const fta = n("fta");
       const fg_pct = fga ? (n("fg") / fga) * 100 : 0;
       const tp_pct = tpa ? (n("3p") / tpa) * 100 : 0;
 
@@ -572,13 +638,12 @@ function aggregateForRecords(team, playerData, gamesForTeam, seasonVal, phaseVal
       }
     });
 
-    // GP record is per player (not single game)
     const gp = filteredRows.length;
     if (!records.gp || gp > records.gp.value) {
       records.gp = {
         player: player.name,
         value: gp,
-        gameId: "", // no single game link
+        gameId: "",
         statKey: "gp",
       };
     }
@@ -621,16 +686,13 @@ function renderRecordsSection(team, playerData, gamesForTeam) {
       const tile = document.createElement("div");
       tile.className = "record-tile";
 
-      // GP is season-long, so we don't link it to a single boxscore
       const clickable = key !== "gp" && rec.gameId;
 
-      const inner = `
+      tile.innerHTML = `
         <div class="record-stat-label">${label}</div>
         <div class="record-stat-value">${displayVal}</div>
         <div class="record-player">${rec.player}</div>
       `;
-
-      tile.innerHTML = inner;
 
       if (clickable) {
         tile.classList.add("record-tile-clickable");
@@ -649,13 +711,13 @@ function renderRecordsSection(team, playerData, gamesForTeam) {
 }
 
 // ---------- boot ----------
-async function init() {
-  initThemeToggle();
+async function initTeamPage() {
+  initThemeToggleSafe();
   initTabs();
 
   const [teams, players, indexRows] = await Promise.all([
-    loadJSON("data/teams.json"),
-    loadJSON("data/players.json"),
+    loadJSONSafe("data/teams.json"),
+    loadJSONSafe("data/players.json"),
     loadIndex(),
   ]);
 
@@ -668,7 +730,6 @@ async function init() {
   fillTeamHeader(team, gamesForTeam);
   await renderRoster(team, players);
 
-  // playerData -> used by leaders + records
   const playerData = await loadRosterPlayerRows(team, players);
 
   renderGamesTable(team, gamesForTeam);
@@ -676,4 +737,4 @@ async function init() {
   renderRecordsSection(team, playerData, gamesForTeam);
 }
 
-window.addEventListener("DOMContentLoaded", init);
+window.addEventListener("DOMContentLoaded", initTeamPage);
