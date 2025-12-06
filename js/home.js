@@ -34,7 +34,9 @@ function createPlayerCard(id, player) {
   const team = player.teamName ? ` · ${player.teamName}` : "";
 
   return `
-    <a class="card" href="player.html?player=${encodeURIComponent(id)}">
+    <a class="card card--player" href="player.html?player=${encodeURIComponent(
+      id
+    )}">
       <div class="card__media">
         <img src="${img}" alt="${player.name}">
       </div>
@@ -45,6 +47,7 @@ function createPlayerCard(id, player) {
     </a>
   `;
 }
+
 
 async function initHomePage() {
   const teamsGrid = document.getElementById("teams-grid");

@@ -35,7 +35,9 @@ function createPlayerCard(id, player) {
   const pos = player.position || "";
 
   return `
-    <a class="card" href="player.html?player=${encodeURIComponent(id)}">
+    <a class="card card--player" href="player.html?player=${encodeURIComponent(
+      id
+    )}">
       <div class="card__media">
         <img src="${img}" alt="${player.name}">
       </div>
@@ -46,6 +48,7 @@ function createPlayerCard(id, player) {
     </a>
   `;
 }
+
 
 // Build a map from season label -> numeric weight for sorting
 function seasonWeight(label) {
